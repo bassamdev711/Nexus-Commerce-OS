@@ -1,0 +1,20 @@
+model Cart {
+  id         String     @id @default(cuid())
+  sessionId  String?    @unique // For guest carts
+  customerId String?    // If auth is added later
+  items      CartItem[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variantId String   // References ProductVariant.id
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, variantId])
+}

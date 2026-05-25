@@ -1,0 +1,33 @@
+model Customer {
+  id                 String             @id @default(cuid())
+  email              String             @unique
+  name               String?
+  
+  marketingOptIn     Boolean            @default(false)
+  emailNotifications Boolean            @default(true)
+  smsNotifications   Boolean            @default(false)
+
+  addresses          CustomerAddress[]
+  orders             Order[]
+  supportTickets     SupportTicket[]
+
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model CustomerAddress {
+  id                 String             @id @default(cuid())
+  customerId         String
+  customer           Customer           @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  label              String?            // e.g. "Home", "Work"
+  street             String
+  city               String
+  state              String?
+  zip                String?
+  country            String
+  isDefault          Boolean            @default(false)
+
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}

@@ -1,0 +1,48 @@
+enum FulfillmentStatus {
+  PENDING
+  PROCESSING
+  PACKED
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  RETURNED
+}
+
+model Fulfillment {
+  id                String             @id @default(cuid())
+  orderId           String
+  order             Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  status            FulfillmentStatus  @default(PENDING)
+
+  trackingNumber    String?
+  carrier           String?
+  trackingUrl       String?
+
+  items             FulfillmentItem[]
+
+  fulfilledAt       DateTime?
+  shippedAt         DateTime?
+  deliveredAt       DateTime?
+  failedAt          DateTime?
+  returnedAt        DateTime?
+
+  metadata          Json?
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model FulfillmentItem {
+  id                String             @id @default(cuid())
+  fulfillmentId     String
+  fulfillment       Fulfillment        @relation(fields: [fulfillmentId], references: [id], onDelete: Cascade)
+  
+  orderItemId       String
+  orderItem         OrderItem          @relation(fields: [orderItemId], references: [id], onDelete: Restrict)
+
+  quantity          Int                // Allows partial fulfillment
+  
+  createdAt         DateTime           @default(now())
+}

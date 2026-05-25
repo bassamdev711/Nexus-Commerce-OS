@@ -1,0 +1,14 @@
+model Media {
+  id        String   @id @default(cuid())
+  url       String
+  key       String   // e.g. UploadThing key or Cloudinary public_id
+  mimeType  String?
+  size      Int?     // size in bytes
+  
+  // Optional: Link to a specific user who uploaded it
+  // uploaderId String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}

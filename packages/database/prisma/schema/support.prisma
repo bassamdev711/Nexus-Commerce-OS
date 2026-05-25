@@ -1,0 +1,51 @@
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_ON_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+model SupportTicket {
+  id                 String             @id @default(cuid())
+  
+  orderId            String?
+  order              Order?             @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  
+  customerId         String?
+  customer           Customer?          @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  subject            String
+  description        String
+
+  status             SupportTicketStatus @default(OPEN)
+  priority           String              @default("NORMAL")
+
+  assignedToId       String?             // Admin ID
+  
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model OrderNote {
+  id                 String             @id @default(cuid())
+  orderId            String
+  order              Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  content            String
+  authorId           String?            // Admin user ID (if applicable later)
+  isInternal         Boolean            @default(true) // Hidden from customer by default
+
+  createdAt          DateTime           @default(now())
+}
+
+model SupportEvent {
+  id                 String             @id @default(cuid())
+  orderId            String
+  order              Order              @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  type               String             // e.g. "TICKET_OPENED", "REFUND_REQUESTED"
+  payload            Json?
+  
+  createdAt          DateTime           @default(now())
+}

@@ -1,0 +1,9 @@
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String   // e.g. "Product created"
+  entity    String   // e.g. "Product", "Category", "Media"
+  entityId  String?  // ID of the entity affected
+  userId    String?  // ID of the user who performed the action
+  details   String?  // JSON string or description with more details
+  createdAt DateTime @default(now())
+}

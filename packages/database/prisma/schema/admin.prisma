@@ -1,0 +1,38 @@
+enum AdminRole {
+  SUPER_ADMIN
+  OPERATIONS
+  SUPPORT
+  WAREHOUSE
+  ANALYST
+}
+
+model AdminUser {
+  id                 String             @id @default(cuid())
+  email              String             @unique
+  name               String
+  role               AdminRole
+  passwordHash       String
+  
+  isActive           Boolean            @default(true)
+  
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model AuditLog {
+  id                 String             @id @default(cuid())
+  
+  actorId            String
+  actorRole          String
+  
+  action             String             // e.g. "INVENTORY_ADJUST", "REFUND_ISSUE"
+  entityType         String             // e.g. "ProductVariant", "Order"
+  entityId           String
+  
+  before             Json?              // Delta or affected fields
+  after              Json?              // Delta or affected fields
+  
+  metadata           Json?              // IP, reason, traceId, etc.
+  
+  createdAt          DateTime           @default(now()) // Immutable append-only
+}

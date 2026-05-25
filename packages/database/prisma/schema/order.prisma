@@ -1,0 +1,83 @@
+enum OrderStatus {
+  // WhatsApp Commerce Lifecycle
+  NEW              // طلب وصل عبر واتساب
+  CONTACTED        // تم التواصل مع العميل
+  // Standard Lifecycle
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  FAILED
+  REFUNDED
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  order_number   String      @unique
+  status         OrderStatus @default(PENDING)
+  
+  customerId     String?
+  customer       Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  // Guest Customer Data
+  customerEmail  String
+  customerName   String?
+  customerPhone  String?
+
+  // Totals Snapshot
+  subtotal       Decimal     @db.Decimal(10, 2)
+  discountTotal  Decimal     @db.Decimal(10, 2) @default(0)
+  grandTotal     Decimal     @db.Decimal(10, 2)
+  currency       String      @default("USD")
+
+  // WhatsApp Commerce
+  whatsappSent   Boolean   @default(false)
+  whatsappSentAt DateTime?
+  adminNotes     String?   // ملاحظات التاجر
+
+  // Fraud & Review Readiness
+  requiresReview Boolean   @default(false)
+  riskLevel      String?   // "LOW", "MEDIUM", "HIGH"
+  flaggedAt      DateTime?
+  reviewedById   String?
+  reviewedAt     DateTime?
+
+  items          OrderItem[]
+  payments       Payment[]
+  refunds        Refund[]
+  fulfillments   Fulfillment[]
+  supportEvents  SupportEvent[]
+  orderNotes     OrderNote[]
+  supportTickets SupportTicket[]
+  
+  reservationExpiresAt DateTime?
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  archivedAt     DateTime?
+}
+
+model OrderItem {
+  id              String  @id @default(cuid())
+  orderId         String
+  order           Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  // Loose Relation (Product might be deleted later)
+  productId       String
+  variantId       String?
+
+  // OrderItem Snapshot (Immutable values at time of purchase)
+  productTitle    String
+  productSlug     String
+  productImageUrl String?
+  variantTitle    String?
+  sku             String?
+  
+  unitPrice       Decimal @db.Decimal(10, 2)
+  quantity        Int     @default(1)
+  subtotal        Decimal @db.Decimal(10, 2)
+
+  fulfillmentItems  FulfillmentItem[]
+}

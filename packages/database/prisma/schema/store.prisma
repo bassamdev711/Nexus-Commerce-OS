@@ -1,0 +1,12 @@
+model Store {
+  id              String    @id @default(cuid())
+  name            String
+  slug            String    @unique
+  logo            String?
+  currency        String    @default("USD")
+  whatsapp_number String?
+  theme           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+}

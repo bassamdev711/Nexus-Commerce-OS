@@ -1,0 +1,21 @@
+{
+  "name": "commerce-core",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "clean": "turbo clean"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.0.0"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "dependencies": {
+    "bullmq": "^5.7.8",
+    "ioredis": "^5.4.1"
+  }
+}
